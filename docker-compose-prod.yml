@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+  nucleo: 
+   environment:
+       RUNMODE: prod
+       SERVICIO_REGISTRAL: app\components\ServicioRegistral
+       SERVICIO_LUGAR: app\components\ServicioLugar
+       SERVICIO_INVENTARIO: app\components\ServicioInventario
