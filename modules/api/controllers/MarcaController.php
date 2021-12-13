@@ -49,10 +49,9 @@ class MarcaController extends ActiveController
     public function actions()
     {
         $actions = parent::actions();
-       unset($actions['create']);
-       unset($actions['update']);
-       unset($actions['delete']);
-       unset($actions['index']);
+        unset($actions['create']);
+        unset($actions['update']);
+        unset($actions['index']);
         return $actions;
     }
 
@@ -70,5 +69,30 @@ class MarcaController extends ActiveController
         
         return $resultado;
 
+    }
+
+     /**
+     * Esta accion permite hacer una interoperabilidad con el sistema inventario
+     * @return array()
+     */
+    public function actionCreate()
+    {        
+        $resultado['estado']=false;
+        $param = Yii::$app->request->post();
+        $servicioInventario = new ServicioInventario();
+        $resultado = $servicioInventario->crearMarca($param);
+        
+        return $resultado;
+    }
+
+    public function actionUpdate($id){
+        
+        $resultado['estado']=false;
+        $param = Yii::$app->request->post();
+        $servicioInventario = new ServicioInventario();
+        $resultado = $servicioInventario->modificarMarca($param);
+        
+        return $resultado;
+        
     }
 }
