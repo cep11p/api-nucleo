@@ -261,32 +261,40 @@ class ServicioInteroperable extends Component
      * @param [array] $data
      * @return void
      */
-    public function borrarMarca($data)
+    public function borrarRegistro($api,$controller,$param)
     {
-        $controller_name = 'marca';
         $client =   $this->_client;
         try{
-            \Yii::error(json_encode($data));
+            \Yii::error(json_encode($param));
             $headers = [
                 'Content-Type'=>'application/json',
                 'Authorization' => 'Bearer ' .$this->crearToken(),
             ];          
             
-            if(!isset($data['id'])){
-                throw new \yii\web\HttpException(400, "Falta el id de la $controller_name");
+            #validaciones
+            if(!isset($api) || empty($api)){
+                throw new \yii\web\HttpException(400, "Falta el nombre de la api para interoperar!");
+            }
+            #validaciones
+            if(!isset($controller) || empty($controller)){
+                throw new \yii\web\HttpException(400, "Falta el nombre del controlador para interoperar!");
             }
             
-            $response = $client->request('DELETE', "http://inventario/api/$controller_name"."s/".$data['id'], ['json' => $data,'headers' => $headers]);
+            if(!isset($param['id'])){
+                throw new \yii\web\HttpException(400, "Falta el id del registro a borrar!");
+            }
+            
+            $response = $client->request('DELETE', "http://$api/api/$controller"."s/".$param['id'], ['headers' => $headers]);
             $respuesta = json_decode($response->getBody()->getContents(), true);
             \Yii::info($respuesta);
-            return $respuesta['data']['id'];
+            return $respuesta;
         } catch (\GuzzleHttp\Exception\BadResponseException $e) {
                 $resultado = json_decode($e->getResponse()->getBody()->getContents());
                 \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
                 \Yii::error('Error de integración:'.$e->getResponse()->getBody(), $category='apioj');
                 
                 #devolvemos array
-                return (array)$resultado;
+                return $resultado;
         } catch (Exception $e) {
                 \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e));
                 \Yii::error('Error inesperado: se produjo:'.$e->getMessage(), $category='apioj');
