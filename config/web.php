@@ -119,9 +119,6 @@ $config = [
             'enablePasswordRecovery'=> false,
             'admins'=>['admin']
         ],
-        'registral' => [
-            'class' => 'app\modules\registral\Registral',
-        ],
         'rbac' => 'dektrium\rbac\RbacWebModule',
     ],
 ];

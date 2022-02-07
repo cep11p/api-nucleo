@@ -2,7 +2,9 @@
 
 namespace app\models;
 
+use app\components\ServicioInteroperable;
 use app\models\ApiUser;
+use app\models\User as ModelsUser;
 use Exception;
 use Yii;
 use yii\db\Query;
@@ -34,6 +36,22 @@ class User extends ApiUser
                 'bedezign\yii2\audit\AuditTrailBehavior',
             ]
         );
+    }
+
+    /**
+     * Se busca el usuario mediante una interoperabilidad
+     * @param int $id
+     * @return User
+     */
+    static function findByUid($id){
+        $servicioInteroperable = new ServicioInteroperable();
+        $resultado = $servicioInteroperable->viewRegistro('user','usuario',['id' => $id]);
+
+        $model = new ModelsUser();
+        $model->setAttributes($resultado);
+        $model->id = $resultado['id'];
+
+        return $model;
     }
     
     static function limpiarPermisos($params){

@@ -56,7 +56,7 @@ class ServicioInteroperable extends Component
 //            'usuario_real'=>\Yii::$app->user->identity->username //comentado para DEV
         ];
         
-        $token = \Firebase\JWT\JWT::encode($payload, \Yii::$app->params['INVENTARIO_JWT_SECRET']);   
+        $token = \Firebase\JWT\JWT::encode($payload, \Yii::$app->params['JWT_SECRET']);   
             
         return  $token;
     }
@@ -114,7 +114,7 @@ class ServicioInteroperable extends Component
      * @param [type] $api
      * @param [type] $controller
      * @param [type] $param
-     * @return void
+     * @return array
      */
     public function viewRegistro($api,$controller,$param)
     {
@@ -122,12 +122,10 @@ class ServicioInteroperable extends Component
         try{
 
             \Yii::error(json_encode($param));
-
             $headers = [
                 'Content-Type'=>'application/json',
                 'Authorization' => 'Bearer ' .$this->crearToken(),
             ];          
-
             #validaciones
             if(!isset($api) || empty($api)){
                 throw new \yii\web\HttpException(400, "Falta el nombre de la api para interoperar!");
@@ -146,12 +144,12 @@ class ServicioInteroperable extends Component
             \Yii::info($respuesta);
             return $respuesta;
         } catch (\GuzzleHttp\Exception\BadResponseException $e) {
-                $resultado = json_decode($e->getResponse()->getBody()->getContents());
-                \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
-                \Yii::error('Error de integración:'.$e->getResponse()->getBody(), $category='apioj');
-                #devolvemos array
-                return (array)$resultado;
-            } catch (Exception $e) {
+            $resultado = json_decode($e->getResponse()->getBody()->getContents());
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
+            \Yii::error('Error de integración:'.$e->getResponse()->getBody(), $category='apioj');
+            #devolvemos array
+            return (array)$resultado;
+        } catch (Exception $e) {
                 \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e));
                 \Yii::error('Error inesperado: se produjo:'.$e->getMessage(), $category='apioj');
 

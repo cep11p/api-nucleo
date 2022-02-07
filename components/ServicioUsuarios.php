@@ -30,6 +30,6 @@ class ServicioUsuarios {
         $usr = User::findOne($userId);
         if($usr)
             return $usr->username;
-        return null;        
+        return $userId;        
     }
 }
