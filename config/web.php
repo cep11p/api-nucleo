@@ -83,6 +83,10 @@ $config = [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => 'api/marca',
                 ],  
+                [   #Localidad
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api/localidad',
+                ],  
                 [   #Usuario
                     'class' => 'yii\rest\UrlRule',
                     'controller' => 'api/usuario',   
