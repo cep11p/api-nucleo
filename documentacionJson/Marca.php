@@ -2,7 +2,7 @@
 
 /**** Para mostrar listado ****/
 /**
-* @url http://api.nucleo.local/marcas
+* @url http://nucleo.local/inventario-marcas
 * @method GET
 * @arrayReturn
 {
@@ -31,7 +31,7 @@
 */
 
 /*****Para crear****
-* @url http://api.nucleo.local/marcas 
+* @url http://nucleo.local/inventario-marcas 
 * @method POST
 * @param arrayJson
  * {
@@ -40,7 +40,7 @@
 **/
 
 /**** Para modificar*****
-* @url http://api.nucleo.local/marcas/{$id} 
+* @url http://nucleo.local/inventario-marcas/{$id} 
 * @method PUT
 * @param arrayJson
  * {
@@ -49,7 +49,7 @@
 **/
 
 /****** Para visualizar*****
-* @url http://api.nucleo.local/marcas/{$id} 
+* @url http://nucleo.local/inventario-marcas/{$id} 
 * @method GET
 * @return arrayJson
  * {
@@ -59,7 +59,7 @@
 */
 
 /****** Para borrar una localidad *****
-* @url http://api.nucleo.local/marcas/{$id} 
+* @url http://nucleo.local/inventario-marcas/{$id} 
 * @method Delete
 * @return arrayJson
     {

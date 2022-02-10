@@ -77,15 +77,15 @@ $config = [
             'rules' => [
                 [   #Producto
                     'class' => 'yii\rest\UrlRule',
-                    'controller' => 'api/producto',
+                    'controller' => 'api/inventario-producto',
                 ],  
                 [   #Marca
                     'class' => 'yii\rest\UrlRule',
-                    'controller' => 'api/marca',
+                    'controller' => 'api/inventario-marca',
                 ],  
                 [   #Localidad
                     'class' => 'yii\rest\UrlRule',
-                    'controller' => 'api/localidad',
+                    'controller' => 'api/lugar-localidad',
                 ],  
                 [   #Usuario
                     'class' => 'yii\rest\UrlRule',

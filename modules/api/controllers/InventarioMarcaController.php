@@ -8,7 +8,7 @@ use Yii;
 use yii\web\Response;
 use yii\rest\ActiveController;
 
-class MarcaController extends ActiveController
+class InventarioMarcaController extends ActiveController
 {
     public $modelClass = 'app\models\Marca';
     /** @var ServicioInventario */ private $servicioInventario;

@@ -2,18 +2,19 @@
 
 namespace app\modules\api\controllers;
 
-use app\components\ServicioInventario;
 use app\components\ServicioInteroperable;
+use app\components\ServicioInventario;
 use Yii;
 use yii\web\Response;
 use yii\rest\ActiveController;
 
-class LocalidadController extends ActiveController
+class InventarioProductoController extends ActiveController
 {
-    public $modelClass = 'app\models\Marca';
+    public $modelClass = 'app\models\Producto';
+    /** @var ServicioInventario */ private $servicioInventario;
 
-    const CONTROLLER_NAME = 'localidad';
-    const SERVICIO_NAME = 'lugar';
+    const CONTROLLER_NAME = 'producto';
+    const SERVICIO_NAME = 'inventario';
     
     public function behaviors()
     {
@@ -31,20 +32,18 @@ class LocalidadController extends ActiveController
 
         $behaviors['authenticator'] = $auth;
 
-       $behaviors['authenticator'] = [
-           'class' => \yii\filters\auth\HttpBearerAuth::className(),
-       ];
+        $behaviors['authenticator'] = [
+            'class' => \yii\filters\auth\HttpBearerAuth::className(),
+        ];
 
         // avoid authentication on CORS-pre-flight requests (HTTP OPTIONS method)
         $behaviors['authenticator']['except'] = ['options'];     
 
-       $behaviors['access'] = [
-           'class' => \yii\filters\AccessControl::className(),
-           'only' => ['@'],
-           'rules' => []
-       ];
-
-
+        $behaviors['access'] = [
+            'class' => \yii\filters\AccessControl::className(),
+            'only' => ['@'],
+            'rules' => []
+        ];
 
         return $behaviors;
     }
@@ -54,14 +53,13 @@ class LocalidadController extends ActiveController
         $actions = parent::actions();
         unset($actions['create']);
         unset($actions['update']);
-        unset($actions['index']);
-        unset($actions['view']);
         unset($actions['delete']);
+        unset($actions['index']);
         return $actions;
     }
 
-    /**
-     * Esta accion permite hacer una interoperabilidad con el sistema inventario y obtener un listado de marcas
+     /**
+     * Esta accion permite hacer una interoperabilidad con otro sistema y nos arma el listado deseado
      * @return array()
      */
     public function actionIndex()
@@ -75,6 +73,13 @@ class LocalidadController extends ActiveController
         return $resultado;
     }
 
+
+    /**
+     * Nos permite hacer una interoperabilidad y ver un registro
+     *
+     * @param [int] $id
+     * @return array()
+     */
     public function actionView($id)
     {
         $resultado['estado']=false;
@@ -88,7 +93,7 @@ class LocalidadController extends ActiveController
 
 
      /**
-     * Esta accion permite hacer una interoperabilidad con el sistema inventario
+     * Esta accion permite hacer una interoperabilidad y registrar un nuevo registro
      * @return array()
      */
     public function actionCreate()
@@ -106,7 +111,7 @@ class LocalidadController extends ActiveController
      * Modifica los datos de un registro
      *
      * @param [int] $id
-     * @return void
+     * @return array
      */
     public function actionUpdate($id){
         
@@ -121,6 +126,13 @@ class LocalidadController extends ActiveController
         
     }
 
+    /**
+     * 
+     * Nos permite borrar un registro interoperablemente
+     *
+     * @param [int] $id
+     * @return array
+     */
     public function actionDelete($id)
     {
         $resultado['estado']=false;

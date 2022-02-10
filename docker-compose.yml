@@ -13,7 +13,7 @@ services:
       DB_PASS: root
     labels:
      - "traefik.backend=nucleo"
-     - "traefik.frontend.rule=Host:api.nucleo.local"
+     - "traefik.frontend.rule=Host:nucleo.local"
      - "traefik.port=80"
 
   nucleo_db:
