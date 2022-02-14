@@ -53,7 +53,6 @@ class ServicioInteroperable extends Component
             'exp'=>time()+3600,
             'usuario'=>\Yii::$app->params['USER_APP'],
             'uid' => \Yii::$app->params['USERID_APP'],
-//            'usuario_real'=>\Yii::$app->user->identity->username //comentado para DEV
         ];
         
         $token = \Firebase\JWT\JWT::encode($payload, \Yii::$app->params['JWT_SECRET']);   
@@ -149,10 +148,11 @@ class ServicioInteroperable extends Component
             #devolvemos array
             return (array)$resultado;
         } catch (Exception $e) {
-                \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e));
-                \Yii::error('Error inesperado: se produjo:'.$e->getMessage(), $category='apioj');
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e));
+            \Yii::error('Error inesperado: se produjo:'.$e->getMessage(), $category='apioj');
 
-                return false;
+            $resultado = $e->getMessage();
+            return $resultado;
         }
        
     }
@@ -196,9 +196,9 @@ class ServicioInteroperable extends Component
 
             return $resultado;
         } catch (Exception $e) {
-                \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e));
-                \Yii::error('Error inesperado: se produjo:'.$e->getMessage(), $category='apioj');
-                return false;
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e));
+            \Yii::error('Error inesperado: se produjo:'.$e->getMessage(), $category='apioj');
+            return false;
         }
        
     }
@@ -237,19 +237,18 @@ class ServicioInteroperable extends Component
             \Yii::info($respuesta);
             return $respuesta;
         } catch (\GuzzleHttp\Exception\BadResponseException $e) {
-                $resultado = json_decode($e->getResponse()->getBody()->getContents());
-                \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
-                \Yii::error('Error de integración:'.$e->getResponse()->getBody(), $category='apioj');
-                
-                #devolvemos array
-                return $resultado;
-            } catch (Exception $e) {
-                \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e));
-                \Yii::error('Error inesperado: se produjo:'.$e->getMessage(), $category='apioj');
+            $resultado = json_decode($e->getResponse()->getBody()->getContents());
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
+            \Yii::error('Error de integración:'.$e->getResponse()->getBody(), $category='apioj');
+            
+            #devolvemos array
+            return $resultado;
+        } catch (Exception $e) {
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e));
+            \Yii::error('Error inesperado: se produjo:'.$e->getMessage(), $category='apioj');
 
-                return $e->getMessage();
-        }
-       
+            return $e->getMessage();
+        } 
     }
 
     /**
@@ -286,18 +285,205 @@ class ServicioInteroperable extends Component
             \Yii::info($respuesta);
             return $respuesta;
         } catch (\GuzzleHttp\Exception\BadResponseException $e) {
-                $resultado = json_decode($e->getResponse()->getBody()->getContents());
-                \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
-                \Yii::error('Error de integración:'.$e->getResponse()->getBody(), $category='apioj');
-                
-                #devolvemos array
-                return $resultado;
+            $resultado = json_decode($e->getResponse()->getBody()->getContents());
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
+            \Yii::error('Error de integración:'.$e->getResponse()->getBody(), $category='apioj');
+            
+            #devolvemos array
+            return $resultado;
         } catch (Exception $e) {
-                \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e));
-                \Yii::error('Error inesperado: se produjo:'.$e->getMessage(), $category='apioj');
-                return false;
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e));
+            \Yii::error('Error inesperado: se produjo:'.$e->getMessage(), $category='apioj');
+            $resultado = $e->getMessage();
+            return $resultado;
         }
        
     }
+
+    /**
+     * Se realiza una asignacion de permiso a un usuario
+     *
+     * @param [string] $api
+     * @param [string] $controller
+     * @param [array] $param
+     * @return array
+     */
+    public function crearAsignacion($api,$controller,$param)
+    {
+        $client =   $this->_client;
+        try{
+            \Yii::error(json_encode($param));
+            $headers = [
+                'Content-Type'=>'application/json',
+                'Authorization' => 'Bearer ' .$this->crearToken(),
+            ];          
+            
+            #validaciones
+            if(!isset($api) || empty($api)){
+                throw new \yii\web\HttpException(400, "Falta el nombre de la api para interoperar!");
+            }
+            #validaciones
+            if(!isset($controller) || empty($controller)){
+                throw new \yii\web\HttpException(400, "Falta el nombre del controlador para interoperar!");
+            }
+            
+            if(!isset($param['id'])){
+                throw new \yii\web\HttpException(400, "Falta el id del registro a borrar!");
+            }
+            
+            $response = $client->request('POST', "http://$api/api/$controller"."s/crear-asignacion", ['json' => $param,'headers' => $headers]);
+            $respuesta = json_decode($response->getBody()->getContents(), true);
+            \Yii::info($respuesta);
+            return $respuesta;
+        } catch (\GuzzleHttp\Exception\BadResponseException $e) {
+            $resultado = json_decode($e->getResponse()->getBody()->getContents());
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
+            \Yii::error('Error de integración:'.$e->getResponse()->getBody(), $category='apioj');
+            
+            #devolvemos array
+            return $resultado;
+        } catch (Exception $e) {
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e));
+            \Yii::error('Error inesperado: se produjo:'.$e->getMessage(), $category='apioj');
+            $resultado = $e->getMessage();
+            return $resultado;
+        }
+    }
+
+    /**
+     * Se obtiene un lista de asginaciones de un usuario
+     *
+     * @param [string] $api
+     * @param [string] $controller
+     * @param [array] $param
+     * @return array
+     */
+    public function ListarAsignacion($api,$controller,$param)
+    {
+        $client =   $this->_client;
+        try{
+
+            \Yii::error(json_encode($param));
+            $headers = [
+                'Content-Type'=>'application/json',
+                'Authorization' => 'Bearer ' .$this->crearToken(),
+            ];          
+            #validaciones
+            if(!isset($api) || empty($api)){
+                throw new \yii\web\HttpException(400, "Falta el nombre de la api para interoperar!");
+            }
+            #validaciones
+            if(!isset($controller) || empty($controller)){
+                throw new \yii\web\HttpException(400, "Falta el nombre del controlador para interoperar!");
+            }
+            
+            if(!isset($param['id'])){
+                throw new \yii\web\HttpException(400, "Falta el id del registro a visualizar");
+            }
+            
+            $response = $client->request('GET', "http://$api/api/$controller"."s/listar-asignacion/".$param['id'], ['headers' => $headers]);
+            $respuesta = json_decode($response->getBody()->getContents(), true);
+            \Yii::info($respuesta);
+            return $respuesta;
+        } catch (\GuzzleHttp\Exception\BadResponseException $e) {
+            $resultado = json_decode($e->getResponse()->getBody()->getContents());
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
+            \Yii::error('Error de integración:'.$e->getResponse()->getBody(), $category='apioj');
+            #devolvemos array
+            return $resultado;
+        } catch (Exception $e) {
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e));
+            \Yii::error('Error inesperado: se produjo:'.$e->getMessage(), $category='apioj');
+
+            $resultado = $e->getMessage();
+            return $resultado;
+        }
+       
+    }
+
+    public function borrarAsignacion($api,$controller,$param)
+    {
+        $client =   $this->_client;
+        try{
+            \Yii::error(json_encode($param));
+            $headers = [
+                'Content-Type'=>'application/json',
+                'Authorization' => 'Bearer ' .$this->crearToken(),
+            ];          
+            
+            #validaciones
+            if(!isset($api) || empty($api)){
+                throw new \yii\web\HttpException(400, "Falta el nombre de la api para interoperar!");
+            }
+            #validaciones
+            if(!isset($controller) || empty($controller)){
+                throw new \yii\web\HttpException(400, "Falta el nombre del controlador para interoperar!");
+            }
+            
+            if(!isset($param['id'])){
+                throw new \yii\web\HttpException(400, "Falta el id del registro a borrar!");
+            }
+            
+            $response = $client->request('POST', "http://$api/api/$controller"."s/borrar-asignacion", ['json' => $param,'headers' => $headers]);
+            $respuesta = json_decode($response->getBody()->getContents(), true);
+            \Yii::info($respuesta);
+            return $respuesta;
+        } catch (\GuzzleHttp\Exception\BadResponseException $e) {
+            $resultado = json_decode($e->getResponse()->getBody()->getContents());
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
+            \Yii::error('Error de integración:'.$e->getResponse()->getBody(), $category='apioj');
+            
+            #devolvemos array
+            return $resultado;
+        } catch (Exception $e) {
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e));
+            \Yii::error('Error inesperado: se produjo:'.$e->getMessage(), $category='apioj');
+            $resultado = $e->getMessage();
+            return $resultado;
+        }
+    }
+
+    public function usuarioBaja($api,$controller,$param)
+    {
+        $client =   $this->_client;
+        try{
+            \Yii::error(json_encode($param));
+            $headers = [
+                'Content-Type'=>'application/json',
+                'Authorization' => 'Bearer ' .$this->crearToken(),
+            ];     
+            
+            #validaciones
+            if(!isset($api) || empty($api)){
+                throw new \yii\web\HttpException(400, "Falta el nombre de la api para interoperar!");
+            }
+            #validaciones
+            if(!isset($controller) || empty($controller)){
+                throw new \yii\web\HttpException(400, "Falta el nombre del controlador para interoperar!");
+            }
+            
+            if(!isset($param['id'])){
+                throw new \yii\web\HttpException(400, "Falta el id del registro a modificar!");
+            }
+            
+            $response = $client->request('PUT', "http://$api/api/$controller"."s/baja".$param['id'], ['json' => $param,'headers' => $headers]);
+            $respuesta = json_decode($response->getBody()->getContents(), true);
+            \Yii::info($respuesta);
+            return $respuesta;
+        } catch (\GuzzleHttp\Exception\BadResponseException $e) {
+            $resultado = json_decode($e->getResponse()->getBody()->getContents());
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
+            \Yii::error('Error de integración:'.$e->getResponse()->getBody(), $category='apioj');
+            
+            #devolvemos array
+            return $resultado;
+        } catch (Exception $e) {
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e));
+            \Yii::error('Error inesperado: se produjo:'.$e->getMessage(), $category='apioj');
+
+            return $e->getMessage();
+        } 
+    }
+       
        
 }
