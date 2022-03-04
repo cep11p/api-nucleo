@@ -96,6 +96,16 @@ $config = [
                     ],
                     'tokens' => ['{id}'=>'<id:\\w+>', '{cuil}'=>'<cuil:\\w+>'],                       
                 ],  
+                [   #Localidad
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api/asignacion',
+                ], 
+                [   #Localidad
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api/modulo',
+                ], 
+
+
             ],
         ],
         

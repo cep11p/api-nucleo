@@ -66,7 +66,7 @@ class ServicioInteroperable extends Component
      * @param [string] $api
      * @param [string] $controller
      * @param [array] $param
-     * @return void
+     * @return array
      */
     public function buscarRegistro($api,$controller,$param)
     {
@@ -163,7 +163,7 @@ class ServicioInteroperable extends Component
      * @param [string] $api
      * @param [string] $controller
      * @param [array] $param
-     * @return void
+     * @return array
      */
     public function crearRegistro($api,$controller,$param)
     {
