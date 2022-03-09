@@ -2,6 +2,7 @@
 
 namespace app\modules\api\controllers;
 
+use app\components\ServicioInteroperable;
 use app\components\VinculoInteroperableHelp;
 use app\models\User;
 use app\models\UserPersona;
@@ -16,6 +17,9 @@ use yii\helpers\ArrayHelper;
 class UsuarioController extends ActiveController
 {
     public $modelClass = 'app\models\ApiUser';
+
+    const CONTROLLER_NAME = 'usuario';
+    const SERVICIO_NAME = 'user';
     
     /** @var Finder */
     protected $finder;
@@ -87,18 +91,27 @@ class UsuarioController extends ActiveController
         unset($actions['create']);
         unset($actions['update']);
         unset($actions['view']);
-        $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
+        unset($actions['index']);
         return $actions;
     }
 
-    public function prepareDataProvider() 
+    public function actionIndex() 
     {
-        $searchModel = new \app\models\UserSearch();
-        $params = \Yii::$app->request->queryParams;
-        $resultado = $searchModel->search($params);
+        $resultado['estado']=false;
+        $param = Yii::$app->request->post();
 
-        $resultado['resultado'] = VinculoInteroperableHelp::vincularDatosLocalidad($resultado['resultado']);
-        $resultado['resultado'] = VinculoInteroperableHelp::vincularDatosPersona($resultado['resultado'],['nombre','apellido','nro_documento','cuil']);
+        $servicioInteroperable = new ServicioInteroperable();
+        $resultado = $servicioInteroperable->buscarRegistro(self::SERVICIO_NAME,self::CONTROLLER_NAME,$param);
+
+        return $resultado;
+    }
+
+    public function actionView($id) 
+    {
+        $resultado['estado']=false;
+        $param['id'] = $id;
+        $servicioInteroperable = new ServicioInteroperable();
+        $resultado = $servicioInteroperable->viewRegistro(self::SERVICIO_NAME,self::CONTROLLER_NAME,$param);
 
         return $resultado;
     }
@@ -108,65 +121,24 @@ class UsuarioController extends ActiveController
      *
      * @return Response|array
      */
-    public function actionLogin()
-    {
-        $parametros = Yii::$app->getRequest()->getBodyParams();
+    public function actionLogin(){
+        $resultado['estado']=false;
+        $param = Yii::$app->request->post();
 
-        #Intancia de ActiveRecord
-        $usuario = $this->finder->findUserByUsernameOrEmail($parametros['username']);       
-        if(!($usuario !== null && Password::validate($parametros['password_hash'],$usuario->password_hash))){
-            throw new \yii\web\HttpException(401, 'usuario o contraseña inválido');
-        }
-        
-        #Buscamos la tabla relacional user_persona
-        $userPersona = UserPersona::findOne(['userid'=>$usuario->id]);
-        
-        #Chequeamos si exite el userpersona
-        if($userPersona == null){
-            throw new \yii\web\HttpException(401, 'El usuario '.$usuario->id.' tiene una inconsitencia con la tabla user_persona');
-        }
-        
-        #Validamos si el usuario esta habilitado
-        if($userPersona->fecha_baja != null){
-            throw new \yii\web\HttpException(401, 'El usuario se encuentra inhabilitado');
-        }
-        
-        #Registramos el horario de ingreso
-        $usuario->last_login_at = time();
-        $usuario->save();
-        
-        #Registramos la ip de ingreso
-        $userPersona->last_login_ip = Yii::$app->getRequest()->getUserIP();
-        $userPersona->save();
-        
-        #Generamos el Token
-        $payload = [
-            'exp'=>time()+3600*8,
-            'usuario'=>$usuario->username,
-            'uid' => $usuario->id  
-        ];
-        $token = \Firebase\JWT\JWT::encode($payload, \Yii::$app->params['JWT_SECRET']);
-        
-        #Obtenemos el Rol
-        $rol = '';
-        $roles = \Yii::$app->authManager->getRolesByUser($usuario->id);
-        foreach($roles as $value){
-            $rol = $value->name;
-            break;
-        }
-        
-        #Seteamos principales datos del resultado
-        $resultado = [
-            'access_token' => $token,
-            'username' => $usuario->username,
-            'rol' => $rol
-        ];
-        
-        #Si es diferente de admin
-        if($rol != 'admin'){
-            $resultado = ArrayHelper::merge($userPersona->persona, $resultado);
-        }
-        
+        $servicioInteroperable = new ServicioInteroperable();
+        $resultado = $servicioInteroperable->login(self::SERVICIO_NAME,self::CONTROLLER_NAME,$param);
+
+        return $resultado;
+    }
+
+    public function actionUpdate($id){
+        $resultado['estado']=false;
+        $param = Yii::$app->request->post();
+        $param['id'] = $id;
+
+        $servicioInteroperable = new ServicioInteroperable();
+        $resultado = $servicioInteroperable->modificarRegistro(self::SERVICIO_NAME,self::CONTROLLER_NAME,$param);
+
         return $resultado;
     }
     
@@ -176,56 +148,11 @@ class UsuarioController extends ActiveController
      * @return void
      */
     public function actionCreate(){
-        $resultado['message']='Se crea un usuario';
-        $params = Yii::$app->request->post();
+        $resultado['estado']=false;
+        $param = Yii::$app->request->post();
 
-        $transaction = Yii::$app->db->beginTransaction();
-        try {
-       
-            $resultado['data']['id'] = User::registrarUsuario($params);
-
-            $transaction->commit();
-            return $resultado;
-        }catch (\yii\web\HttpException $exc) {
-            $transaction->rollBack();
-            $mensaje =$exc->getMessage();
-            $statuCode =$exc->statusCode;
-            throw new \yii\web\HttpException($statuCode, $mensaje);
-        }
-    }
-
-    public function actionUpdate($id){
-        $resultado['message']='Se modifica un usuario';
-        $params = Yii::$app->request->post();
-
-        $model = User::findOne(['id'=>$id]);            
-        if($model==NULL){
-            throw new \yii\web\HttpException(400, 'El usuario con el id '.$id.' no existe!');
-        }
-
-        $transaction = Yii::$app->db->beginTransaction();
-        try {
-       
-            $resultado['data']['id'] = $model->modificarUsuario($params);
-
-            $transaction->commit();
-            return $resultado;
-        }catch (\yii\web\HttpException $exc) {
-            $transaction->rollBack();
-            $mensaje =$exc->getMessage();
-            $statuCode =$exc->statusCode;
-            throw new \yii\web\HttpException($statuCode, $mensaje);
-        }
-    }
-
-    public function actionView($id){
-        $model = User::findOne(['id'=>$id]);            
-        if($model==NULL){
-            throw new \yii\web\HttpException(400, 'El usuario con el id '.$id.' no existe!');
-        }
-        
-        $resultado = ArrayHelper::merge($model->toArray(),$model->userPersona->persona);
-        $resultado['localidad'] = $model->userPersona->localidad;
+        $servicioInteroperable = new ServicioInteroperable();
+        $resultado = $servicioInteroperable->crearRegistro(self::SERVICIO_NAME,self::CONTROLLER_NAME,$param);
         
         return $resultado;
     }
