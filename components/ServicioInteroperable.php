@@ -248,12 +248,12 @@ class ServicioInteroperable extends Component
     }
 
     /**
-     * Borrar marca
+     * Se habilita o se inhabilita un registro
      *
      * @param [array] $data
      * @return void
      */
-    public function borrarRegistro($api,$controller,$param)
+    public function setActivoRegistro($api,$controller,$param)
     {
         $client =   $this->_client;
         try{
@@ -275,8 +275,8 @@ class ServicioInteroperable extends Component
             if(!isset($param['id'])){
                 throw new \yii\web\HttpException(400, "Falta el id del registro a borrar!");
             }
-            
-            $response = $client->request('DELETE', "http://$api/api/$controller"."s/".$param['id'], ['headers' => $headers]);
+
+            $response = $client->request('PUT', "http://$api/api/$controller"."s/set-activo/".$param['id'], ['json' => $param,'headers' => $headers]);
             $respuesta = json_decode($response->getBody()->getContents(), true);
             \Yii::info($respuesta);
             return $respuesta;

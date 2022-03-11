@@ -78,7 +78,27 @@ $config = [
                 [   #Producto
                     'class' => 'yii\rest\UrlRule',
                     'controller' => 'api/inventario-producto',
+                    'extraPatterns' => [
+                        'PUT set-activo/{id}' => 'set-activo',
+                        'OPTIONS set-activo/{id}' => 'set-activo',
+                    ],
                 ],  
+                [   #Categoria
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api/inventario-categoria',
+                    'extraPatterns' => [
+                        'PUT set-activo/{id}' => 'set-activo',
+                        'OPTIONS set-activo/{id}' => 'set-activo',
+                    ],
+                ],
+                [   #Categoria
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api/inventario-unidad-medida',
+                    'extraPatterns' => [
+                        'PUT set-activo/{id}' => 'set-activo',
+                        'OPTIONS set-activo/{id}' => 'set-activo',
+                    ],
+                ],
                 [   #Marca
                     'class' => 'yii\rest\UrlRule',
                     'controller' => 'api/inventario-marca',

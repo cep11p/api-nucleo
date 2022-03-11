@@ -123,13 +123,20 @@ class InventarioMarcaController extends ActiveController
         
     }
 
-    public function actionDelete($id)
+    /**
+     * 
+     * Nos permite habilitar o inhabilitar un registro interoperablemente
+     *
+     * @param [int] $id
+     * @return array
+     */
+    public function actionSetActivo($id)
     {
         $resultado['estado']=false;
-        $param = Yii::$app->request->queryParams;
+        $param = Yii::$app->request->post();
         $param['id'] = $id;
         $servicioInteroperable = new ServicioInteroperable();
-        $resultado = $servicioInteroperable->borrarRegistro(self::SERVICIO_NAME,self::CONTROLLER_NAME,$param);
+        $resultado = $servicioInteroperable->setActivoRegistro(self::SERVICIO_NAME,self::CONTROLLER_NAME,$param);
         
         return $resultado;
     }
