@@ -17,28 +17,73 @@
 
 /** Listado de usuarios
 * @url http://nucleo.local/api/usuarios
-* @method POST
-* @param arrayJson
-{
-  "username":"admin",
-  "password_hash":"admins"
-}
+* @method GET
 * @return
 {
-    "nombre": "Victoria Margarita",
-    "apellido": "González",
-    "nro_documento": "23851266",
-    "cuil": "20068512669",
-    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTQyMDYwMjMsInVzdWFyaW8iOiJhZG1pbiIsInVpZCI6MX0.gB1lraNxeF-6wsBpf4X0VA2Y8AypQKdkPk-9dxdupWA",
-    "username": "admin",
-    "lista_convenio": [
+    "pagesize": 20,
+    "pages": 1,
+    "total_filtrado": 3,
+    "resultado": [
         {
-            "id": "1",
-            "nombre": "8180"
+            "id": 1,
+            "username": "admin",
+            "email": "admin_apiuser@correo.com",
+            "confirmed_at": "2022-01-21",
+            "unconfirmed_email": null,
+            "blocked_at": null,
+            "registration_ip": "172.21.0.8",
+            "created_at": "2022-01-21",
+            "updated_at": "2022-03-15",
+            "flags": 0,
+            "last_login_at": "2022-03-15 16:02:52",
+            "last_login_ip": "172.21.0.7",
+            "personaid": 0,
+            "fecha_baja": "",
+            "baja": false,
+            "descripcion_baja": "",
+            "localidadid": 0
         },
         {
-            "id": "2",
-            "nombre": "8277"
+            "id": 5,
+            "username": "nucleo",
+            "email": "nucleo@correo.com",
+            "confirmed_at": "1970-01-01",
+            "unconfirmed_email": null,
+            "blocked_at": null,
+            "registration_ip": null,
+            "created_at": "2021-12-06",
+            "updated_at": "2022-01-26",
+            "flags": 0,
+            "last_login_at": "2022-01-26 15:46:13",
+            "last_login_ip": "172.21.0.2",
+            "personaid": 0,
+            "fecha_baja": "",
+            "baja": false,
+            "descripcion_baja": "",
+            "localidadid": 0
+        },
+        {
+            "id": 23,
+            "username": "usuario",
+            "email": "uncorreo1@correo.com",
+            "confirmed_at": "2022-03-04",
+            "unconfirmed_email": null,
+            "blocked_at": null,
+            "registration_ip": "172.21.0.7",
+            "created_at": "2022-03-04",
+            "updated_at": "2022-03-04",
+            "flags": 0,
+            "last_login_at": "2022-03-04 16:27:40",
+            "last_login_ip": "172.21.0.7",
+            "personaid": 2,
+            "fecha_baja": "",
+            "baja": false,
+            "descripcion_baja": "",
+            "localidadid": 2626,
+            "apellido": "Pezzatti",
+            "nombre": "Ruben Alberto",
+            "nro_documento": "10477134",
+            "cuil": "20104771344"
         }
     ]
 }
