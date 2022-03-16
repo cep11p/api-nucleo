@@ -10,8 +10,24 @@
 }
 * @return
 {
-    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDY0MzIyNjAsInVzdWFyaW8iOiJhZG1pbiIsInVpZCI6MX0.H1yFB9ZI6-mdsrVePA9a82iCaI7wRSZpn4s6uqLN9hQ",
-    "username": "admin"
+    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NDc0NzA5ODAsInVzdWFyaW8iOiJhZG1pbiIsImxpc3RhX21vZHVsbyI6W3siaWQiOiIyIiwibm9tYnJlIjoiTHVnYXIiLCJzZXJ2aWNpbyI6Imx1Z2FyIiwic2lnbGEiOiJMVUciLCJjb21wb25lbnRlIjpudWxsfV0sInVpZCI6MX0.tBckVsonz3kyUDRQLOaFvkHCAt6XPPL3wemHnUUokmo",
+    "username": "admin",
+    "lista_modulo": [
+        {
+            "id": "2",
+            "nombre": "Lugar",
+            "servicio": "lugar",
+            "sigla": "LUG",
+            "componente": null
+        },
+        {
+            "id": "3",
+            "nombre": "INVENTARIO",
+            "servicio": "inventario",
+            "sigla": "INV",
+            "componente": null
+        }
+    ]
 }
 **/
 
@@ -33,15 +49,24 @@
             "blocked_at": null,
             "registration_ip": "172.21.0.8",
             "created_at": "2022-01-21",
-            "updated_at": "2022-03-15",
+            "updated_at": "2022-03-16",
             "flags": 0,
-            "last_login_at": "2022-03-15 16:02:52",
+            "last_login_at": "2022-03-16 11:58:00",
             "last_login_ip": "172.21.0.7",
             "personaid": 0,
             "fecha_baja": "",
             "baja": false,
             "descripcion_baja": "",
-            "localidadid": 0
+            "localidadid": 0,
+            "lista_modulo": [
+                {
+                    "id": "2",
+                    "nombre": "Lugar",
+                    "servicio": "lugar",
+                    "sigla": "LUG",
+                    "componente": null
+                }
+            ]
         },
         {
             "id": 5,
@@ -60,7 +85,8 @@
             "fecha_baja": "",
             "baja": false,
             "descripcion_baja": "",
-            "localidadid": 0
+            "localidadid": 0,
+            "lista_modulo": []
         },
         {
             "id": 23,
@@ -80,6 +106,7 @@
             "baja": false,
             "descripcion_baja": "",
             "localidadid": 2626,
+            "lista_modulo": [],
             "apellido": "Pezzatti",
             "nombre": "Ruben Alberto",
             "nro_documento": "10477134",
@@ -133,26 +160,36 @@
 * @method GET
 * @return arrayJson
 {
-    "id": 2,
-    "username": "admin",
-    "email": "admin@correo.com",
-    "confirmed_at": 1556894840,
+    "id": 23,
+    "username": "usuario",
+    "email": "uncorreo1@correo.com",
+    "confirmed_at": "2022-03-04",
     "unconfirmed_email": null,
     "blocked_at": null,
-    "registration_ip": "172.18.0.2",
-    "created_at": 1556894840,
-    "updated_at": 1607700159,
+    "registration_ip": "172.21.0.7",
+    "created_at": "2022-03-04",
+    "updated_at": "2022-03-04",
     "flags": 0,
-    "last_login_at": 1610453141,
-    "personaid": 1,
+    "last_login_at": "2022-03-04 16:27:40",
+    "last_login_ip": "172.21.0.7",
+    "personaid": 2,
     "fecha_baja": "",
     "baja": false,
     "descripcion_baja": "",
     "localidadid": 2626,
-    "nombre": "Victoria Margarita",
-    "apellido": "González",
-    "nro_documento": "23851266",
-    "cuil": "20068512669",
+    "lista_modulo": [
+        {
+            "id": "2",
+            "nombre": "Lugar",
+            "servicio": "lugar",
+            "sigla": "LUG",
+            "componente": null
+        }
+    ],
+    "nombre": "Ruben Alberto",
+    "apellido": "Pezzatti",
+    "nro_documento": "10477134",
+    "cuil": "20104771344",
     "localidad": "Rio Colorado"
 }
 */
