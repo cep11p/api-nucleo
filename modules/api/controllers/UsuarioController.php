@@ -152,7 +152,7 @@ class UsuarioController extends ActiveController
 
         // $transaction = Yii::$app->db->beginTransaction();
         try {
-            if(!isset($param['usuario']['modulo ']) || empty($param['usuario']['modulo '])){
+            if(!isset($param['usuario']['modulo']) || empty($param['usuario']['modulo'])){
                 throw new \yii\web\HttpException(400, "Falta el modulo a asignar.");
             }
 
