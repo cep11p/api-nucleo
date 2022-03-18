@@ -150,10 +150,32 @@ class UsuarioController extends ActiveController
         $resultado['estado']=false;
         $param = Yii::$app->request->post();
 
-        $servicioInteroperable = new ServicioInteroperable();
-        $resultado = $servicioInteroperable->crearRegistro(self::SERVICIO_NAME,self::CONTROLLER_NAME,$param);
-        
-        return $resultado;
+        // $transaction = Yii::$app->db->beginTransaction();
+        try {
+            $servicioInteroperable = new ServicioInteroperable();
+            $resultado = $servicioInteroperable->crearRegistro(self::SERVICIO_NAME,self::CONTROLLER_NAME,$param);
+            $param_rol['userid'] = $resultado['data']['id'];
+            $param_rol['servicio'] = $param['usuario']['modulo']['servicio'];
+            $param_rol['rol'] = $param['usuario']['rol'];
+            
+            if(!isset($resultado['data']['id']) || empty($resultado['data']['id'])){
+                throw new \yii\web\HttpException(500, 'No se pudo registrar el usuario correctamente. Vuelva a intentarlo mas tarde.');
+            }
+    
+            User::setRol($param_rol);
+            
+            return $resultado;
+        }catch (\yii\web\HttpException $exc) {
+
+            #rolBack (borramos el usuario)
+            $servicioInteroperable->borrarRegistro('user','usuario',['id' => $param_rol['userid']]);
+            // $this->borrarRegistro('user','usuario',);
+
+            // $transaction->rollBack();
+            $mensaje =$exc->getMessage();
+            $statuCode =$exc->statusCode;
+            throw new \yii\web\HttpException($statuCode, $mensaje);
+        }
     }
 
     /**

@@ -54,27 +54,16 @@ class User extends ApiUser
         return $model;
     }    
 
-    public function setRol($rol)
+    /**
+     * Realiamos un seteo de roles interoperablemente en el modulo deseado
+     */
+    static function setRol($param)
     {
-        #Chequeamos si el rol existe
-        if(AuthItem::findOne(['name'=>$rol,'type'=>AuthItem::ROLE])==NULL){
-            throw new \yii\web\HttpException(400, json_encode([['rol'=>'El rol '.$rol.' no existe']]));
+        if(!isset($param['servicio']) || empty($param['servicio'])){
+            throw new \yii\web\HttpException(400, "Falta el modulo a asignar.");
         }
-
-        ######### Asignamos el Rol ###########
-        //Si el usuario tiene rol borramos y dsp lo recreamos
-        AuthAssignment::deleteAll(['user_id'=>$this->id, 'item_name'=>User::USUARIO]);
-        AuthAssignment::deleteAll(['user_id'=>$this->id, 'item_name'=>User::SOPORTE]);
-        AuthAssignment::deleteAll(['user_id'=>$this->id, 'item_name'=>User::ADMIN]);
-        
-
-        $auth_assignment = new AuthAssignment();
-        $auth_assignment->setAttributes(['item_name'=>$rol,'user_id'=>strval($this->id)]);
-        if(!$auth_assignment->save()){
-            throw new \yii\web\HttpException(400, json_encode([$auth_assignment->errors]));
-        }
-
-        ######### Fin de asignacion de Rol ###########
+        $servicioInteroperable = new ServicioInteroperable();
+        $servicioInteroperable->setRol($param['servicio'],'usuario',$param);
 
     }
     

@@ -384,6 +384,93 @@ class ServicioInteroperable extends Component
     }
 
     /**
+     * Realizamos el seteo del rol en un modulo especifico
+     */
+    public function setRol($api,$controller,$param)
+    {
+        $client =   $this->_client;
+        try{
+            \Yii::error(json_encode($param));
+            $headers = [
+                'Content-Type'=>'application/json',
+                'Authorization' => 'Bearer ' .$this->crearToken(),
+            ];          
+            
+            #validaciones
+            if(!isset($api) || empty($api)){
+                throw new \yii\web\HttpException(400, "Falta el nombre de la api para interoperar!");
+            }
+            #validaciones
+            if(!isset($controller) || empty($controller)){
+                throw new \yii\web\HttpException(400, "Falta el nombre del controlador para interoperar!");
+            }
+                        
+            $response = $client->request('POST', "http://$api/api/$controller"."s/set-rol", ['json' => $param,'headers' => $headers]);
+            $respuesta = json_decode($response->getBody()->getContents(), true);
+            \Yii::info($respuesta);
+            return $respuesta;
+        } catch (\GuzzleHttp\Exception\BadResponseException $e) {
+            
+            
+            $resultado = json_decode($e->getResponse()->getBody()->getContents());
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
+            \Yii::error('Error de integración:'.$e->getResponse()->getBody(), $category='apioj');
+            
+            throw new \yii\web\HttpException(400, $resultado->message);
+        } catch (Exception $e) {
+            
+            $mensaje =$e->getMessage();
+            $statuCode = (isset($e->statusCode))?$e->statusCode:500;
+            throw new \yii\web\HttpException($statuCode, $mensaje);
+        }
+    }
+
+    /**
+     * Borramos un registro
+     */
+    public function borrarRegistro($api,$controller,$param)
+    {
+        $client =   $this->_client;
+        try{
+            \Yii::error(json_encode($param));
+            $headers = [
+                'Content-Type'=>'application/json',
+                'Authorization' => 'Bearer ' .$this->crearToken(),
+            ];     
+
+            #validaciones
+            if(!isset($api) || empty($api)){
+                throw new \yii\web\HttpException(400, "Falta el nombre de la api para interoperar!");
+            }
+            #validaciones
+            if(!isset($controller) || empty($controller)){
+                throw new \yii\web\HttpException(400, "Falta el nombre del controlador para interoperar!");
+            }
+            
+            if(!isset($param['id'])){
+                throw new \yii\web\HttpException(400, "Falta el id del registro a modificar!");
+            }
+            
+            $response = $client->request('DELETE', "http://$api/api/$controller"."s/".$param['id'], ['headers' => $headers]);
+            $respuesta = json_decode($response->getBody()->getContents(), true);
+            \Yii::info($respuesta);
+            return $respuesta;
+        } catch (\GuzzleHttp\Exception\BadResponseException $e) {
+            $resultado = json_decode($e->getResponse()->getBody()->getContents());
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
+            \Yii::error('Error de integración:'.$e->getResponse()->getBody(), $category='apioj');
+            print_r($resultado);
+            die();
+            #devolvemos array
+            throw new \yii\web\HttpException(400, $resultado->message);
+        } catch (Exception $e) {
+            $mensaje =$e->getMessage();
+            $statuCode = (isset($e->statusCode))?$e->statusCode:500;
+            throw new \yii\web\HttpException($statuCode, $mensaje);
+        }
+    }
+
+    /**
      * Se obtiene un lista de asginaciones de un usuario
      *
      * @param [string] $api
