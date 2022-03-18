@@ -93,5 +93,22 @@ class User extends ApiUser
         
         return $data;
     }
+
+    /**
+     * Vamos desvincular un usuario de un modulo y del rol en ese modulo
+     *
+     * @param [array] $param
+     * @return void
+     */
+    static function unsetRolConModulo($param)
+    {
+        if(!isset($param['modulo']['servicio']) || empty($param['modulo']['servicio'])){
+            throw new \yii\web\HttpException(400, "Falta el modulo.");
+        }
+        $servicioInteroperable = new ServicioInteroperable();
+        $servicioInteroperable->unsetRol($param['modulo']['servicio'],'usuario',$param);
+
+        return true;
+    }
     
 }

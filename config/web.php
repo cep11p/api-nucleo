@@ -115,6 +115,8 @@ $config = [
                         'OPTIONS login' => 'options',
                         'OPTIONS buscar-persona-por-cuil/{cuil}' => 'buscar-persona-por-cuil',
                         'GET buscar-persona-por-cuil/{cuil}' => 'buscar-persona-por-cuil',
+                        'OPTIONS unset-rol' => 'unset-rol',
+                        'POST unset-rol' => 'unset-rol',
                     ],
                     'tokens' => ['{id}'=>'<id:\\w+>', '{cuil}'=>'<cuil:\\w+>'],                       
                 ],  

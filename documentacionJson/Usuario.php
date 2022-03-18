@@ -296,3 +296,16 @@
     "usuarioid": 2
 }
 **/
+
+/** Borrar rol a un Usuario
+* @url http://nucleo.local/api/usuarios/unset-rol
+* @method POST
+* @param arrayJson
+{
+  "userid":65,
+  "rol": "usuario",
+  "modulo" : {
+  	"servicio":"inventario"
+  }
+}
+**/

@@ -74,7 +74,7 @@ class UsuarioController extends ActiveController
                 ],
                 [
                     'allow' => true,
-                    'actions' => ['index','create','update','view','buscar-persona-por-cuil','baja', 'crear-asignacion', 'listar-asignacion','borrar-asignacion'],
+                    'actions' => ['index','create','update','view','buscar-persona-por-cuil','baja','unset-rol', 'crear-asignacion', 'listar-asignacion','borrar-asignacion'],
                     'roles' => ['soporte'],
                 ]
             ]
@@ -235,6 +235,17 @@ class UsuarioController extends ActiveController
             }
         }
         
+        return $resultado;
+    }
+
+    public function actionUnsetRol (){
+        $params = Yii::$app->request->post();
+        $resultado['success'] = false;
+        if(User::unsetRolConModulo($params)){
+            $resultado['success'] = true;
+            $resultado['mensaje'] = 'Se borra una asignacion de rol';
+        }
+
         return $resultado;
     }
 

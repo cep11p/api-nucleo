@@ -424,7 +424,12 @@ class ServicioInteroperable extends Component
     }
 
     /**
-     * Realizamos el seteo del rol en un modulo especifico
+     * Vamos a seter un rol a un usuario dentro de un modulo
+     *
+     * @param [string] $api
+     * @param [string] $controller
+     * @param [array] $param
+     * @return void
      */
     public function setRol($api,$controller,$param)
     {
@@ -451,6 +456,52 @@ class ServicioInteroperable extends Component
             return $respuesta;
         } catch (\GuzzleHttp\Exception\BadResponseException $e) {
             
+            
+            $resultado = json_decode($e->getResponse()->getBody()->getContents());
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
+            \Yii::error('Error de integración:'.$e->getResponse()->getBody(), $category='apioj');
+            
+            throw new \yii\web\HttpException(400, $resultado->message);
+        } catch (Exception $e) {
+
+            $mensaje =$e->getMessage();
+            $statuCode = (isset($e->statusCode))?$e->statusCode:500;
+            throw new \yii\web\HttpException($statuCode, $mensaje);
+        }
+    }
+
+    /**
+     * Vamos a borrar el rol de un usuario en un modulo
+     *
+     * @param [string] $api
+     * @param [string] $controller
+     * @param [array] $param
+     * @return void
+     */
+    public function unsetRol($api,$controller,$param)
+    {
+        $client =   $this->_client;
+        try{
+            \Yii::error(json_encode($param));
+            $headers = [
+                'Content-Type'=>'application/json',
+                'Authorization' => 'Bearer ' .$this->crearToken(),
+            ];          
+            
+            #validaciones
+            if(!isset($api) || empty($api)){
+                throw new \yii\web\HttpException(400, "Falta el nombre de la api para interoperar!");
+            }
+            #validaciones
+            if(!isset($controller) || empty($controller)){
+                throw new \yii\web\HttpException(400, "Falta el nombre del controlador para interoperar!");
+            }
+                        
+            $response = $client->request('POST', "http://$api/api/$controller"."s/unset-rol", ['json' => $param,'headers' => $headers]);
+            $respuesta = json_decode($response->getBody()->getContents(), true);
+            \Yii::info($respuesta);
+            return $respuesta;
+        } catch (\GuzzleHttp\Exception\BadResponseException $e) {
             
             $resultado = json_decode($e->getResponse()->getBody()->getContents());
             \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
