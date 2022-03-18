@@ -152,6 +152,14 @@ class UsuarioController extends ActiveController
 
         // $transaction = Yii::$app->db->beginTransaction();
         try {
+            if(!isset($param['usuario']['rol']) || empty($param['usuario']['rol'])){
+                throw new \yii\web\HttpException(400, "Falta el modulo a asignar.");
+            }
+
+            if(!isset($param['usuario']['rol']) || empty($param['usuario']['rol'])){
+                throw new \yii\web\HttpException(400, "Falta el rol a asignar.");
+            }
+
             $servicioInteroperable = new ServicioInteroperable();
             $resultado = $servicioInteroperable->crearRegistro(self::SERVICIO_NAME,self::CONTROLLER_NAME,$param);
             $param_rol['userid'] = $resultado['data']['id'];
