@@ -224,29 +224,13 @@
  {
     "success": true,
     "resultado": {
-        "id": 2,
-        "nro_documento": "32054238",
-        "cuil": "20320542389",
-        "nombre": "Isabel Sofía",
-        "apellido": "Rodríguez",
-        "usuario": {
-            "id": 13,
-            "username": "cep11p",
-            "email": "cep11p@correo.com",
-            "auth_key": "aN1ar_QzmaG90RK8vGo3IQdwI6ylIPo3",
-            "confirmed_at": 1614092528,
-            "unconfirmed_email": null,
-            "blocked_at": null,
-            "registration_ip": "172.20.0.8",
-            "created_at": 1614092528,
-            "updated_at": 1614092528,
-            "flags": 0,
-            "last_login_at": null,
-            "personaid": 2,
-            "localidadid": 2626
-        }
+        "id": 8564,
+        "nro_documento": "36849868",
+        "cuil": "20368498689",
+        "nombre": "Carlos",
+        "apellido": "Perez"
     }
-  }
+}
  **/
 
 /** Crear Asignacion de modulo a Usuario

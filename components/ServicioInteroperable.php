@@ -300,6 +300,46 @@ class ServicioInteroperable extends Component
        
     }
 
+    /**
+     * Vamos a buscar una persona por cuil en registral
+     */
+    public function buscarPersonaPorCuil($cuil)
+    {
+        $client =   $this->_client;
+        try{
+            $headers = [
+                'Authorization' => 'Bearer ' .$this->crearToken(),
+                'Content-Type'=>'application/json'
+            ];  
+            
+            if(!isset($cuil)){
+                throw new \yii\web\HttpException(400, "Falta el cuil del registro a borrar!");
+            }
+            
+            $response = $client->request('GET', 'http://registral/api/personas/buscar-por-cuil/'.$cuil, ['headers' => $headers]);
+            $respuesta = json_decode($response->getBody()->getContents(), true);
+            \Yii::error($respuesta);
+            
+            foreach ($respuesta as $value) {
+                $respuesta = $value;
+                break;
+            }
+
+            return $respuesta;
+        } catch (\GuzzleHttp\Exception\BadResponseException $e) {
+            $resultado = json_decode($e->getResponse()->getBody()->getContents());
+            \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
+            \Yii::error('Error de integración:'.$e->getResponse()->getBody(), $category='apioj');
+            
+            throw new \yii\web\HttpException(400, $resultado->message);
+        } catch (Exception $e) {
+            $mensaje =$e->getMessage();
+            $statuCode = (isset($e->statusCode))?$e->statusCode:500;
+            throw new \yii\web\HttpException($statuCode, $mensaje);
+        }
+       
+    }
+
     public function login($api,$controller,$param)
     {
         $client =   $this->_client;
@@ -418,7 +458,7 @@ class ServicioInteroperable extends Component
             
             throw new \yii\web\HttpException(400, $resultado->message);
         } catch (Exception $e) {
-            
+
             $mensaje =$e->getMessage();
             $statuCode = (isset($e->statusCode))?$e->statusCode:500;
             throw new \yii\web\HttpException($statuCode, $mensaje);

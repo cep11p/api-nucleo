@@ -66,5 +66,32 @@ class User extends ApiUser
         $servicioInteroperable->setRol($param['servicio'],'usuario',$param);
 
     }
+
+    static function buscarPersonaPorCuil($cuil){
+        $servicioInteroperable = new ServicioInteroperable();
+        $resultado = $servicioInteroperable->buscarPersonaPorCuil($cuil);
+        // $resultado = \Yii::$app->registral->buscarPersonaPorCuil($cuil);
+                
+        if(count($resultado)>0){    
+            $data['id'] = $resultado['id'];       
+            $data['nro_documento'] = $resultado['nro_documento'];       
+            $data['cuil'] = $resultado['cuil'];       
+            $data['nombre'] = $resultado['nombre'];       
+            $data['apellido'] = $resultado['apellido'];
+
+            $usuarioPersona = UserPersona::findOne(['personaid'=>$resultado['id']]);
+            if($usuarioPersona!=null){
+                $data['usuario'] = User::findOne(['id'=>$usuarioPersona->userid])->toArray();
+                $data['usuario']['personaid'] = $usuarioPersona->personaid;
+                $data['usuario']['localidadid'] = $usuarioPersona->localidadid;
+                unset($data['usuario']['password_hash']);
+            }
+            
+        }else{
+            $data = false;  
+        }
+        
+        return $data;
+    }
     
 }
