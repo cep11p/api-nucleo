@@ -152,7 +152,7 @@ class UsuarioController extends ActiveController
 
         // $transaction = Yii::$app->db->beginTransaction();
         try {
-            if(!isset($param['usuario']['rol']) || empty($param['usuario']['rol'])){
+            if(!isset($param['usuario']['modulo ']) || empty($param['usuario']['modulo '])){
                 throw new \yii\web\HttpException(400, "Falta el modulo a asignar.");
             }
 
@@ -176,7 +176,9 @@ class UsuarioController extends ActiveController
         }catch (\yii\web\HttpException $exc) {
 
             #rolBack (borramos el usuario)
-            $servicioInteroperable->borrarRegistro('user','usuario',['id' => $param_rol['userid']]);
+            if(isset($param_rol['userid'])){
+                $servicioInteroperable->borrarRegistro('user','usuario',['id' => $param_rol['userid']]);
+            }
             // $this->borrarRegistro('user','usuario',);
 
             // $transaction->rollBack();
