@@ -550,8 +550,7 @@ class ServicioInteroperable extends Component
             $resultado = json_decode($e->getResponse()->getBody()->getContents());
             \Yii::$app->getModule('audit')->data('catchedexc', \yii\helpers\VarDumper::dumpAsString($e->getResponse()->getBody()));
             \Yii::error('Error de integración:'.$e->getResponse()->getBody(), $category='apioj');
-            print_r($resultado);
-            die();
+
             #devolvemos array
             throw new \yii\web\HttpException(400, $resultado->message);
         } catch (Exception $e) {
