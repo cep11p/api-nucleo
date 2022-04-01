@@ -39,17 +39,13 @@ class User extends ApiUser
     }
 
     /**
-     * Se busca el usuario mediante una interoperabilidad
+     * Se utiliza el id del usuario del sistema api-user
      * @param int $id
      * @return User
      */
     static function findByUid($id){
-        $servicioInteroperable = new ServicioInteroperable();
-        $resultado = $servicioInteroperable->viewRegistro('user','usuario',['id' => $id]);
-
         $model = new ModelsUser();
-        $model->setAttributes($resultado);
-        $model->id = $resultado['id'];
+        $model->id = $id;
 
         return $model;
     }    
