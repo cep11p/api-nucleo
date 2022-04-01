@@ -171,17 +171,13 @@ class UsuarioController extends ActiveController
             }
     
             User::setRol($param_rol);
-            
             return $resultado;
         }catch (\yii\web\HttpException $exc) {
-
             #rolBack (borramos el usuario)
             if(isset($param_rol['userid'])){
                 $servicioInteroperable->borrarRegistro('user','usuario',['id' => $param_rol['userid']]);
             }
-            // $this->borrarRegistro('user','usuario',);
 
-            // $transaction->rollBack();
             $mensaje =$exc->getMessage();
             $statuCode =$exc->statusCode;
             throw new \yii\web\HttpException($statuCode, $mensaje);
