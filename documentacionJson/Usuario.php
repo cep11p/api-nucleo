@@ -253,6 +253,24 @@
 }
 **/
 
+/**
+ * Crear asignacion a usuario
+ * @url http://nucleo.local/api/usuarios/listar-asignacion
+ * @method POST
+ * @param array $param
+    {
+    "moduloid":4, 
+    "servicio" : "inventario",
+    "rol":"usuario", 
+    "rule": (parametro para instaciar la regla, puede ser nulo),
+    "usuarioid" : 88,
+    "lista_permiso": [
+        {"name" : "comprobante_aprobar"},
+        {"name" : "comprobante_crear"}
+    ]
+    }
+ */
+
 /** Listar Asignaciones a Usuarios
 * @url http://nucleo.local/api/usuarios/listar-asignacion/14
 * @method GET

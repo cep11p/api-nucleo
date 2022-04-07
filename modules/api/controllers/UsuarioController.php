@@ -3,16 +3,12 @@
 namespace app\modules\api\controllers;
 
 use app\components\ServicioInteroperable;
-use app\components\VinculoInteroperableHelp;
 use app\models\User;
-use app\models\UserPersona;
 use yii\rest\ActiveController;
 use Yii;
 use yii\web\Response;
 use dektrium\user\Finder;
-use dektrium\user\helpers\Password;
 use dektrium\user\Module;
-use yii\helpers\ArrayHelper;
 
 class UsuarioController extends ActiveController
 {
@@ -245,5 +241,16 @@ class UsuarioController extends ActiveController
         return $resultado;
     }
 
+    /**
+     * Se crean asignaciones interoperables a usuarios
+     *
+     * @return array user
+     */
+    public function actionCrearAsignacion(){
+        $param = Yii::$app->request->post();
+        $resultado = User::crearAsignacion($param);
+
+        return $resultado;
+    }
 
 }
